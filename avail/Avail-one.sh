@@ -63,5 +63,8 @@ sudo systemctl daemon-reload
 sudo systemctl enable availd
 sudo systemctl start availd.service
 
+# 增加5s延迟
+sleep 5
+
 # 输出Avail运行钱包地址
 journalctl -u availd | grep address
