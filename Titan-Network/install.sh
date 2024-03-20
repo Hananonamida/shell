@@ -47,3 +47,5 @@ do
 done
 
 echo "==============================所有容器均已设置并启动==================================="
+
+# docker exec -it titan5 bash -c 'titan-edge bind --hash=77CC384C-93F1-4DC0-8082-F5A2DEE6944F https://api-test1.container1.titannet.io/api/v2/device/binding'
