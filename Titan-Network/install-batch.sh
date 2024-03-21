@@ -61,10 +61,10 @@ do
 
     echo "节点 titan$i 已经启动 容器ID $container_id"
 
-    sleep 30
+    sleep 10
 
     # 进入容器并执行绑定和其他命令
-    docker exec -it $container_id bash -c "\
+    docker exec -i $container_id bash -c "\
         titan-edge bind --hash=$id https://api-test1.container1.titannet.io/api/v2/device/binding"
 done
 
