@@ -1,5 +1,5 @@
 # 使用基础镜像
-FROM hananonamida/gaganode:1.0.4
+FROM traffmonetizer/cli_v2:latest
 
 # 定义环境变量
 ENV TOKEN=default_token
