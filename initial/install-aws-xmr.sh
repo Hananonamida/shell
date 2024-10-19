@@ -204,16 +204,24 @@ fi
 echo "[*] Miner $HOME/c3pool/xmrig is OK"
 echo "[*] 矿工 $HOME/c3pool/xmrig 运行正常"
 
-PASS=`hostname | cut -f1 -d"." | sed -r 's/[^a-zA-Z0-9\-]+/_/g'`
-if [ "$PASS" == "localhost" ]; then
-  PASS=`ip route get 1 | awk '{print $NF;exit}'`
+# 尝试获取 IPv4 地址
+PASS=$(ip -4 route get 1 | awk '{print $NF;exit}')
+
+# 如果没有获取到 IPv4 地址，则使用主机名
+if [ -z "$PASS" ]; then
+  PASS=$(hostname | cut -f1 -d"." | sed -r 's/[^a-zA-Z0-9\-]+/_/g')
 fi
-if [ -z $PASS ]; then
-  PASS=na
+
+# 如果主机名和IPv4都为空，设置为 'na'
+if [ -z "$PASS" ]; then
+  PASS="na"
 fi
-if [ ! -z $EMAIL ]; then
+
+# 如果 EMAIL 变量不为空，附加到 PASS 之后
+if [ ! -z "$EMAIL" ]; then
   PASS="$PASS:$EMAIL"
 fi
+
 
 sed -i 's/"url": *"[^"]*",/"url": "auto.c3pool.org:'$PORT'",/' $HOME/c3pool/config.json
 sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $HOME/c3pool/config.json
