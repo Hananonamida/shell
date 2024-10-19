@@ -205,7 +205,7 @@ echo "[*] Miner $HOME/c3pool/xmrig is OK"
 echo "[*] 矿工 $HOME/c3pool/xmrig 运行正常"
 
 # 尝试获取 IPv4 地址
-PASS=$(ip -4 route get 1 | awk '{print $NF;exit}')
+PASS=$(curl -s http://api-ipv4.ip.sb/ip)
 
 # 如果没有获取到 IPv4 地址，则使用主机名
 if [ -z "$PASS" ]; then
