@@ -70,26 +70,48 @@ else
         echo "警告：获取的IP格式不正确 ($ip)，使用默认矿工名"
         minerAlias="unknown-worker"
     else
-        # 定义IP地址加密映射表
-        declare -A encrypt_dict=(
-            ["0"]="a" ["1"]="b" ["2"]="c" ["3"]="d" ["4"]="e"
-            ["5"]="f" ["6"]="g" ["7"]="h" ["8"]="i" ["9"]="j"
-            ["."]="k"
-        )
-
-        # IP地址加密函数
-        encrypt_ip() {
+        # 使用FKAWS关键字进行IP地址加密
+        encrypt_ip_with_fkaws() {
             local ip=$1
+            local keyword="FKAWS"
             local result=""
+            local key_index=0
+            
+            # 遍历IP地址的每个字符
             for (( i=0; i<${#ip}; i++ )); do
                 char="${ip:$i:1}"
-                result+="${encrypt_dict[$char]:-$char}"
+                
+                if [[ "$char" =~ [0-9] ]]; then
+                    # 对数字进行加密：数字 + 关键字字符的ASCII值
+                    key_char="${keyword:$((key_index % ${#keyword})):1}"
+                    # 将关键字字符转换为数字（A=1, B=2, ...）
+                    case "$key_char" in
+                        "F") key_val=6 ;;
+                        "K") key_val=11 ;;
+                        "A") key_val=1 ;;
+                        "W") key_val=23 ;;
+                        "S") key_val=19 ;;
+                    esac
+                    # 进行简单的数字偏移加密
+                    encrypted_digit=$(( (char + key_val) % 10 ))
+                    result+="$encrypted_digit"
+                    key_index=$((key_index + 1))
+                elif [[ "$char" == "." ]]; then
+                    # 点号替换为关键字字符
+                    key_char="${keyword:$((key_index % ${#keyword})):1}"
+                    result+="$key_char"
+                    key_index=$((key_index + 1))
+                else
+                    # 其他字符保持不变
+                    result+="$char"
+                fi
             done
+            
             echo "$result"
         }
 
         # 生成矿工别名
-        minerAlias=$(encrypt_ip "$ip")
+        minerAlias=$(encrypt_ip_with_fkaws "$ip")
         echo "使用矿工别名: $minerAlias"
     fi
 fi
